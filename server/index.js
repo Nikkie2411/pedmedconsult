@@ -19,49 +19,18 @@ app.use(express.json());
 // app.use('/api/admin', adminRoutes);
 // app.use('/api/auth', authRoutes);
 
-// Determine which service to use based on environment
-const USE_REAL_SHEETS = process.env.USE_REAL_SHEETS === 'true';
-
-let sheetsService;
-let emailService;
-
-if (USE_REAL_SHEETS) {
-    console.log('🔗 Using REAL Google Sheets and Email services');
-    sheetsService = require('./services/googleSheetsService');
-    emailService = require('./services/emailService');
-} else {
-    console.log('🔧 Using MOCK Google Sheets and Email services');
-    const MockGoogleSheetsService = require('./services/mockGoogleSheetsService');
-    sheetsService = new MockGoogleSheetsService();
-    emailService = require('./services/mockEmailService');
-}
+const sheetsService = require('./services/googleSheetsService');
+const emailService = require('./services/emailService');
 
 // Initialize services
 async function initializeServices() {
     try {
-        if (USE_REAL_SHEETS) {
-            await sheetsService.initialize();
-            console.log('✅ Real Google Sheets service initialized');
-        } else {
-            await sheetsService.initialize();
-            console.log('✅ Mock Google Sheets service initialized');
-        }
-        
-        // Initialize auth service after sheets service is ready
-        // initAuthService(sheetsService);
-        console.log('✅ Services initialized');
+        await sheetsService.initialize();
+        console.log('✅ Google Sheets service initialized');
         
     } catch (error) {
         console.error('❌ Failed to initialize services:', error.message);
-        if (USE_REAL_SHEETS) {
-            console.log('🔄 Falling back to mock services...');
-            const MockGoogleSheetsService = require('./services/mockGoogleSheetsService');
-            sheetsService = new MockGoogleSheetsService();
-            emailService = require('./services/mockEmailService');
-            await sheetsService.initialize();
-            // initAuthService(sheetsService);
-            console.log('✅ Fallback to mock services successful');
-        }
+        process.exit(1);
     }
 }
 
@@ -70,11 +39,6 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         message: 'PedMedConsult Server is running',
-        mode: USE_REAL_SHEETS ? 'PRODUCTION' : 'DEVELOPMENT',
-        services: {
-            sheets: USE_REAL_SHEETS ? 'Google Sheets API' : 'Mock Data',
-            email: USE_REAL_SHEETS ? 'Real Email' : 'Mock Email'
-        },
         timestamp: new Date().toISOString()
     });
 });
@@ -330,8 +294,6 @@ initializeServices().then(() => {
     app.listen(PORT, () => {
         console.log('🚀 PedMedConsult Server running on port', PORT);
         console.log('📊 Health check: http://localhost:' + PORT + '/api/health');
-        console.log('🔧 Mode:', USE_REAL_SHEETS ? 'PRODUCTION (Real APIs)' : 'DEVELOPMENT (Mock Data)');
-        console.log('💡 To switch to real APIs, set USE_REAL_SHEETS=true in .env');
     });
 }).catch((error) => {
     console.error('❌ Failed to initialize server:', error);
