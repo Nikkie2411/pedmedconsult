@@ -16,9 +16,68 @@ class MockGoogleSheetsService {
                 { id: 2, email: 'duocsi2@hospital.com', fullName: 'Dược sĩ Trần Thị Y', department: 'Tim mạch', specialization: 'TDM Tim mạch', phoneNumber: '0907654321', workSchedule: 'T2-T6: 8h-17h', maxCaseLoad: 8, currentCaseLoad: 2, expertise: 'Digoxin, Warfarin', isAvailable: true, priority: 2, lastAssigned: '2025-08-24 09:00', createdDate: '2025-08-20' }
             ],
             users: [
-                { id: 1, email: 'doctor1@hospital.com', displayName: 'BS. Nguyễn Văn D', role: 'Doctor', department: 'Nhi khoa', speciality: 'Nhi tim mạch', phoneNumber: '0912345678', isActive: true, lastLogin: '2025-08-24 10:00', createdDate: '2025-08-20', permissions: 'CREATE_REQUEST,VIEW_REQUESTS' },
-                { id: 2, email: 'duocsi1@hospital.com', displayName: 'DS. Nguyễn Văn X', role: 'Pharmacist', department: 'Dược', speciality: 'TDM', phoneNumber: '0901234567', isActive: true, lastLogin: '2025-08-24 08:00', createdDate: '2025-08-20', permissions: 'VIEW_REQUESTS,RESPOND_REQUESTS' },
-                { id: 3, email: 'admin@hospital.com', displayName: 'Quản trị viên', role: 'Admin', department: 'IT', speciality: 'Hệ thống', phoneNumber: '0909999999', isActive: true, lastLogin: '2025-08-24 07:00', createdDate: '2025-08-20', permissions: 'ALL_PERMISSIONS' }
+                // Bác sĩ - tài khoản chung theo khoa
+                { 
+                    username: 'sicu', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // sicu123
+                    role: 'doctor', 
+                    department: 'SICU', 
+                    fullName: 'Bác sĩ SICU', 
+                    email: 'sicu@hospital.com', 
+                    phone: '0901234567', 
+                    status: 'active' 
+                },
+                { 
+                    username: 'nhi', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // nhi123
+                    role: 'doctor', 
+                    department: 'Nhi khoa', 
+                    fullName: 'Bác sĩ Nhi khoa', 
+                    email: 'nhi@hospital.com', 
+                    phone: '0901234568', 
+                    status: 'active' 
+                },
+                { 
+                    username: 'timMach', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // timMach123
+                    role: 'doctor', 
+                    department: 'Tim Mạch', 
+                    fullName: 'Bác sĩ Tim Mạch', 
+                    email: 'timmach@hospital.com', 
+                    phone: '0901234569', 
+                    status: 'active' 
+                },
+                // Dược sĩ - tài khoản riêng
+                { 
+                    username: 'duocSi1', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // duocSi123
+                    role: 'pharmacist', 
+                    department: 'Dược', 
+                    fullName: 'DS. Nguyễn Văn A', 
+                    email: 'duocsi1@hospital.com', 
+                    phone: '0901234570', 
+                    status: 'active' 
+                },
+                { 
+                    username: 'duocSi2', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // duocSi456  
+                    role: 'pharmacist', 
+                    department: 'Dược', 
+                    fullName: 'DS. Trần Thị B', 
+                    email: 'duocsi2@hospital.com', 
+                    phone: '0901234571', 
+                    status: 'active' 
+                },
+                { 
+                    username: 'duocSi3', 
+                    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // duocSi789
+                    role: 'pharmacist', 
+                    department: 'Dược', 
+                    fullName: 'DS. Lê Văn C', 
+                    email: 'duocsi3@hospital.com', 
+                    phone: '0901234572', 
+                    status: 'active' 
+                }
             ]
         };
         this.nextIds = {
@@ -138,6 +197,22 @@ class MockGoogleSheetsService {
         
         console.log(`👥 Mock: Retrieved ${pharmacists.length} pharmacists with filters:`, filters);
         return pharmacists;
+    }
+
+    // Users Operations
+    async getUserByUsername(username) {
+        const user = this.mockData.users.find(u => u.username === username && u.status === 'active');
+        if (user) {
+            console.log(`👤 Mock: Found user ${username} (${user.role})`);
+            return user;
+        }
+        console.log(`❌ Mock: User ${username} not found`);
+        return null;
+    }
+
+    async getAllUsers() {
+        console.log(`👥 Mock: Retrieved ${this.mockData.users.length} users`);
+        return this.mockData.users;
     }
 
     // Health check
