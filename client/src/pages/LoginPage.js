@@ -24,12 +24,6 @@ const LoginPage = () => {
         }
     };
 
-    const goToTestEmail = () => {
-        // Set a flag to navigate to test email page
-        window.location.hash = 'test-email';
-        window.location.reload();
-    };
-
     return (
         <div className="login-page">
             <div className="login-container">
@@ -67,16 +61,10 @@ const LoginPage = () => {
                         </button>
                     </form>
 
-                    <div className="demo-accounts">
-                        <h3>Tài khoản demo:</h3>
-                        <p><strong>Bác sĩ:</strong> doctor@example.com / password123</p>
-                        <p><strong>Dược sĩ:</strong> pharmacist@example.com / password123</p>
-                    </div>
-
-                    <div className="test-section">
-                        <button onClick={goToTestEmail} className="test-email-button">
-                            Test Email Service
-                        </button>
+                    <div className="info-section">
+                        <p style={{ fontSize: '0.9rem', color: '#666', textAlign: 'center', marginTop: '1rem' }}>
+                            💡 Liên hệ quản trị viên để được cấp tài khoản truy cập hệ thống
+                        </p>
                     </div>
                 </div>
             </div>

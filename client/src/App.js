@@ -6,7 +6,6 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import NewRequestPage from './pages/NewRequestPage';
 import PharmacistPage from './pages/PharmacistPage';
-import TestEmailPage from './pages/TestEmailPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -39,33 +38,25 @@ function App() {
       setLoading(false);
     });
 
-    // Check URL hash for navigation
-    const checkHash = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash === 'test-email') {
-        setCurrentPage('test-email');
-      }
-    };
-
-    checkHash();
-    window.addEventListener('hashchange', checkHash);
-
     return () => {
       unsubscribe();
-      window.removeEventListener('hashchange', checkHash);
     };
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Test email page (accessible without login for development)
-  if (currentPage === 'test-email') {
-    return <TestEmailPage onBack={() => {
-      window.location.hash = '';
-      setCurrentPage('home');
-    }} />;
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        fontSize: '18px'
+      }}>
+        Đang tải...
+      </div>
+    );
   }
 
   if (!user || !userProfile) {
