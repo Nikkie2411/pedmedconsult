@@ -428,6 +428,6 @@ class GoogleSheetsService {
     }
 }
 
-// Export singleton instance
-const googleSheetsService = new GoogleSheetsService();
-module.exports = googleSheetsService;
+// Export class and singleton instance
+module.exports = GoogleSheetsService;
+module.exports.instance = new GoogleSheetsService();
