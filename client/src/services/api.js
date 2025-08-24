@@ -1,11 +1,20 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 class ApiService {
+    constructor() {
+        this.authToken = null;
+    }
+
+    setAuthToken(token) {
+        this.authToken = token;
+    }
+
     async makeRequest(endpoint, options = {}) {
         const url = `${API_BASE_URL}${endpoint}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
+                ...(this.authToken && { 'Authorization': `Bearer ${this.authToken}` }),
                 ...options.headers,
             },
             ...options,
@@ -15,6 +24,12 @@ class ApiService {
             const response = await fetch(url, config);
             
             if (!response.ok) {
+                if (response.status === 401) {
+                    // Token expired or invalid
+                    localStorage.removeItem('authToken');
+                    this.authToken = null;
+                    window.location.reload();
+                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
@@ -23,6 +38,32 @@ class ApiService {
             console.error('API request failed:', error);
             throw error;
         }
+    }
+
+    // Authentication APIs
+    async login(username, password) {
+        return this.makeRequest('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ username, password }),
+        });
+    }
+
+    async logout() {
+        return this.makeRequest('/auth/logout', {
+            method: 'POST',
+        });
+    }
+
+    async verifyToken(token) {
+        this.authToken = token;
+        return this.makeRequest('/auth/verify');
+    }
+
+    async changePassword(oldPassword, newPassword) {
+        return this.makeRequest('/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ oldPassword, newPassword }),
+        });
     }
 
     // Patient related APIs

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import './LoginPage.css';
 
-const LoginPage = () => {
-    const [email, setEmail] = useState('');
+const LoginPage = ({ onLogin }) => {
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,9 +13,12 @@ const LoginPage = () => {
         setLoading(true);
         
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const result = await onLogin(username, password);
+            if (!result.success) {
+                setError(result.message || 'Đăng nhập thất bại');
+            }
         } catch (err) {
-            setError('Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.');
+            setError('Lỗi kết nối. Vui lòng thử lại.');
             console.error(err);
         } finally {
             setLoading(false);
@@ -33,13 +34,14 @@ const LoginPage = () => {
                     
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Email:</label>
+                            <label>Tên đăng nhập:</label>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                                 required
                                 disabled={loading}
+                                placeholder="VD: sicu, pharmacist1"
                             />
                         </div>
                         
@@ -62,6 +64,12 @@ const LoginPage = () => {
                     </form>
 
                     <div className="info-section">
+                        <div className="account-info">
+                            <h4>Tài khoản mẫu:</h4>
+                            <p><strong>Bác sĩ:</strong> sicu, nhi, timMach</p>
+                            <p><strong>Dược sĩ:</strong> pharmacist1, pharmacist2</p>
+                            <p><strong>Mật khẩu:</strong> 123456</p>
+                        </div>
                         <p style={{ fontSize: '0.9rem', color: '#666', textAlign: 'center', marginTop: '1rem' }}>
                             💡 Liên hệ quản trị viên để được cấp tài khoản truy cập hệ thống
                         </p>

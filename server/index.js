@@ -5,9 +5,19 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Routes
+// const adminRoutes = require('./routes/admin');
+// const authModule = require('./routes/auth');
+// const authRoutes = authModule.router;
+// const initAuthService = authModule.initAuthService;
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+// app.use('/api/admin', adminRoutes);
+// app.use('/api/auth', authRoutes);
 
 // Determine which service to use based on environment
 const USE_REAL_SHEETS = process.env.USE_REAL_SHEETS === 'true';
@@ -36,6 +46,11 @@ async function initializeServices() {
             await sheetsService.initialize();
             console.log('✅ Mock Google Sheets service initialized');
         }
+        
+        // Initialize auth service after sheets service is ready
+        // initAuthService(sheetsService);
+        console.log('✅ Services initialized');
+        
     } catch (error) {
         console.error('❌ Failed to initialize services:', error.message);
         if (USE_REAL_SHEETS) {
@@ -44,6 +59,7 @@ async function initializeServices() {
             sheetsService = new MockGoogleSheetsService();
             emailService = require('./services/mockEmailService');
             await sheetsService.initialize();
+            // initAuthService(sheetsService);
             console.log('✅ Fallback to mock services successful');
         }
     }

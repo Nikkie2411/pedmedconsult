@@ -310,6 +310,122 @@ class GoogleSheetsService {
             };
         }
     }
+
+    // Authentication-related methods
+    async getUsers() {
+        try {
+            if (!this.sheets.users) {
+                throw new Error('Users sheet not found');
+            }
+            
+            const rows = await this.sheets.users.getRows();
+            return rows.map(row => ({
+                id: row.get('id'),
+                username: row.get('username'),
+                password: row.get('password'),
+                department: row.get('department'),
+                role: row.get('role'),
+                status: row.get('status'),
+                createdDate: row.get('createdDate'),
+                lastLogin: row.get('lastLogin')
+            }));
+        } catch (error) {
+            console.error('Error getting users:', error);
+            throw error;
+        }
+    }
+
+    async createUser(userData) {
+        try {
+            if (!this.sheets.users) {
+                throw new Error('Users sheet not found');
+            }
+            
+            await this.sheets.users.addRow(userData);
+            return userData;
+        } catch (error) {
+            console.error('Error creating user:', error);
+            throw error;
+        }
+    }
+
+    async updateUserLastLogin(userId) {
+        try {
+            const rows = await this.sheets.users.getRows();
+            const userRow = rows.find(row => row.get('id') === userId);
+            
+            if (userRow) {
+                userRow.set('lastLogin', new Date().toISOString());
+                await userRow.save();
+            }
+        } catch (error) {
+            console.error('Error updating user last login:', error);
+            throw error;
+        }
+    }
+
+    async updateUserPassword(userId, hashedPassword) {
+        try {
+            const rows = await this.sheets.users.getRows();
+            const userRow = rows.find(row => row.get('id') === userId);
+            
+            if (userRow) {
+                userRow.set('password', hashedPassword);
+                await userRow.save();
+            } else {
+                throw new Error('User not found');
+            }
+        } catch (error) {
+            console.error('Error updating user password:', error);
+            throw error;
+        }
+    }
+
+    async createPharmacist(pharmacistData) {
+        try {
+            if (!this.sheets.pharmacists) {
+                throw new Error('Pharmacists sheet not found');
+            }
+            
+            await this.sheets.pharmacists.addRow(pharmacistData);
+            return pharmacistData;
+        } catch (error) {
+            console.error('Error creating pharmacist:', error);
+            throw error;
+        }
+    }
+
+    async updatePharmacistLastLogin(pharmacistId) {
+        try {
+            const rows = await this.sheets.pharmacists.getRows();
+            const pharmacistRow = rows.find(row => row.get('id') === pharmacistId);
+            
+            if (pharmacistRow) {
+                pharmacistRow.set('lastLogin', new Date().toISOString());
+                await pharmacistRow.save();
+            }
+        } catch (error) {
+            console.error('Error updating pharmacist last login:', error);
+            throw error;
+        }
+    }
+
+    async updatePharmacistPassword(pharmacistId, hashedPassword) {
+        try {
+            const rows = await this.sheets.pharmacists.getRows();
+            const pharmacistRow = rows.find(row => row.get('id') === pharmacistId);
+            
+            if (pharmacistRow) {
+                pharmacistRow.set('password', hashedPassword);
+                await pharmacistRow.save();
+            } else {
+                throw new Error('Pharmacist not found');
+            }
+        } catch (error) {
+            console.error('Error updating pharmacist password:', error);
+            throw error;
+        }
+    }
 }
 
 // Export singleton instance

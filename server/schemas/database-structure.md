@@ -1,35 +1,58 @@
 # PedMedConsult Database Structure
 
+## 🔐 Authentication System
+
+### Firebase Authentication
+- **Primary Authentication**: Firebase Auth xử lý đăng ký/đăng nhập
+- **Password Management**: Mật khẩu được Firebase quản lý an toàn
+- **Email Verification**: Firebase verify email accounts
+- **Session Management**: Firebase tokens cho session security
+
+### Google Sheets Profile Storage
+- **User Profiles**: Chỉ lưu thông tin profile (không có mật khẩu)
+- **Role Management**: Phân quyền doctor/pharmacist
+- **Link by Email**: Email là unique identifier liên kết Firebase ↔ Sheets
+
+---
+
 ## Google Sheets Structure
 
-### 1. **Users Sheet** (Bác sĩ)
-Lưu thông tin tài khoản đăng nhập của các bác sĩ theo khoa phòng
+### 1. **Users Sheet** (Bác sĩ Profile)
+Lưu thông tin profile của bác sĩ (không chứa mật khẩu)
 
 | Column | Type | Description | Required | Example |
 |--------|------|-------------|----------|---------|
 | id | Text | User ID (auto-generated) | Yes | USER_001 |
-| email | Email | Email đăng nhập | Yes | doctor@hospital.com |
-| name | Text | Họ tên bác sĩ | Yes | BS. Nguyễn Văn A |
+| email | Email | Email (liên kết với Firebase Auth) | Yes | doctor@hospital.com |
+| fullName | Text | Họ tên đầy đủ | Yes | BS. Nguyễn Văn A |
 | department | Text | Khoa phòng | Yes | Nhi khoa |
-| role | Text | Vai trò | Yes | doctor |
+| role | Text | Vai trò (cố định: doctor) | Yes | doctor |
 | phone | Text | Số điện thoại | No | 0901234567 |
+| title | Text | Học hàm học vị | No | Bác sĩ chuyên khoa II |
 | pharmacistIds | Text | DS phụ trách (nhiều ID, phân cách bằng dấu phẩy) | No | PHARM_001,PHARM_002 |
-| createdDate | Date | Ngày tạo tài khoản | Yes | 2025-08-24 |
+| createdDate | Date | Ngày tạo profile | Yes | 2025-08-24 |
+| lastLogin | DateTime | Lần đăng nhập cuối | No | 2025-08-24 10:30:00 |
 | status | Text | Trạng thái tài khoản | Yes | active |
 
-### 2. **Pharmacists Sheet** (Dược sĩ)
-Lưu thông tin tài khoản và phạm vi phụ trách của dược sĩ
+**⚠️ Lưu ý**: Mật khẩu KHÔNG lưu trong sheet, được Firebase Auth quản lý
+
+### 2. **Pharmacists Sheet** (Dược sĩ Profile)
+Lưu thông tin profile của dược sĩ (không chứa mật khẩu)
 
 | Column | Type | Description | Required | Example |
 |--------|------|-------------|----------|---------|
 | id | Text | Pharmacist ID (auto-generated) | Yes | PHARM_001 |
-| email | Email | Email đăng nhập | Yes | pharmacist@hospital.com |
-| name | Text | Họ tên dược sĩ | Yes | DS. Trần Thị B |
+| email | Email | Email (liên kết với Firebase Auth) | Yes | pharmacist@hospital.com |
+| fullName | Text | Họ tên đầy đủ | Yes | DS. Trần Thị B |
 | phone | Text | Số điện thoại | Yes | 0901234568 |
 | departments | Text | Khoa phòng phụ trách (nhiều khoa, phân cách bằng dấu phẩu) | Yes | Nhi khoa,Sơ sinh |
-| role | Text | Vai trò | Yes | pharmacist |
-| createdDate | Date | Ngày tạo tài khoản | Yes | 2025-08-24 |
+| role | Text | Vai trò (cố định: pharmacist) | Yes | pharmacist |
+| title | Text | Học hàm học vị | No | Dược sĩ chuyên khoa I |
+| createdDate | Date | Ngày tạo profile | Yes | 2025-08-24 |
+| lastLogin | DateTime | Lần đăng nhập cuối | No | 2025-08-24 10:30:00 |
 | status | Text | Trạng thái tài khoản | Yes | active |
+
+**⚠️ Lưu ý**: Mật khẩu KHÔNG lưu trong sheet, được Firebase Auth quản lý
 
 ### 3. **Patients Sheet** (Bệnh nhân)
 Lưu thông tin bệnh nhân và yêu cầu TDM chính
